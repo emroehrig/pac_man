@@ -7,109 +7,84 @@
 void clrscr (void);
 char get_key(void);
 void hidecursor(void);
+void affichage(void);
 
+int tableau1[22][22]={0};
 
 int main()
 {
-//ouverture et lecture du fichier texte
-    FILE* fichier=NULL;
-    char chaine[20]="";
-    int ligne=0;
 
-    fichier=fopen("Grille1.txt","r");
 
-    if(fichier != NULL)
-    {
-        for(ligne=0;ligne<40;ligne++)
-        {
-            fgets(chaine,20,fichier);
-        printf("%s",chaine);
-        }
-    }
+    int pacman=5;
 
-/*    int pacman='o';
-    char tableau1[20][20]={0};
     int i=0;
     int j=0;
     int dieze=0;
     int positionx;
     int positiony;
     int temps_de_pause;
+    int tempy;
+    int tempx;
     char quitter;
     char lettre;
 
-    positionx=0;
-    positiony=0;
-    temps_de_pause=150;
+    FILE* fichier=NULL;
+    char chaine[22]="";
+    int ligne=0;
+    int colonne=0;
+
+    tempy=1;
+    tempx=1;
+    positionx=1;
+    positiony=1;
+    temps_de_pause=100;
 
     while(quitter!='p')
     {
+    hidecursor();
 
-        hidecursor();
     //initialisation des tableaux
-         for(j=0;j<20;j++)
+       for(j=0;j<20;j++)
         {
 
         for(i=0;i<20;i++)
             {
-                tableau1[i][j]=' ';
-
+                tableau1[i][j]=0;
             }
         }
 
-        tableau1[2][0]='#';
-        Sleep(temps_de_pause);
+    //ouverture et lecture du fichier texte
+
+    fichier=fopen("Grille1.txt","r");
+
+    if(fichier != NULL)
+    {
+        for(ligne=0;ligne<22;ligne++)
+        {
+            fgets(chaine,22,fichier);
+
+            for(colonne=0;colonne<22;colonne++)
+           {
+               if(chaine[colonne]=='0' || chaine[colonne]=='1')
+               {
+                  tableau1[colonne][ligne]=chaine[colonne]-48;
+               }
+            }
+        }
+    }
+
+       Sleep(temps_de_pause);
         clrscr();
 
-//affichage du bord
-    for(dieze=0;dieze<20;dieze++)
-    {
-        tableau1[dieze][0]='#';
-        tableau1[dieze][19]='#';
-        tableau1[0][dieze]='#';
-        tableau1[19][dieze]='#';
-    }
-//affichage des obstables
-
-
-
-// définition des limites
-    if(positionx>18)
-    {
-        positionx=18;
-    }
-
-    if(positionx<1)
-    {
-        positionx=1;
-    }
-
-    if(positiony>18)
-    {
-        positiony=18;
-    }
-
-    if(positiony<1)
-    {
-        positiony=1;
-    }
-
-//affichage de la grille
     tableau1[positionx][positiony]=pacman;
-    for(j=0;j<20;j++)
-        {
-
-        for(i=0;i<20;i++)
-            {
-                printf("%c ",tableau1[i][j]);
-
-            }
-            printf("\n");
-        }
+    tempy=positiony;
+    tempx=positionx;
+    affichage();
 
     printf("\n");
+
 //gestion des touches
-    lettre=get_key();
+   lettre=get_key();
 
     switch(lettre)
     {
@@ -118,12 +93,22 @@ int main()
         case'q':{positionx=positionx-1;}break;
         case'd':{positionx=positionx+1;}break;
     }
-    }*/
 
+    if(tableau1[positionx][positiony]==1)
+    {
+       positiony=tempy;
+    }
+
+       if(tableau1[positionx][positiony]==1)
+    {
+       positionx=tempx;
+    }
+
+}
 }
 
 // vide l'écran
-/*void clrscr(void)
+void clrscr(void)
 {
     HANDLE handle;
     COORD coord= { 0, 0 };
@@ -152,4 +137,31 @@ void hidecursor()
    info.dwSize = 100;
    info.bVisible = FALSE;
    SetConsoleCursorInfo(consoleHandle, &info);
-}*/
+}
+
+void affichage(void)
+{
+    int i;
+    int j;
+
+        for(j=0;j<20;j++)
+    {
+
+        for(i=0;i<20;i++)
+            {
+                if (tableau1[i][j]==0)
+                {
+                    printf("  ");
+                }
+                if (tableau1[i][j]==1)
+                {
+                    printf("%c%c",219,219);
+                }
+                if (tableau1[i][j]==5)
+                {
+                    printf("O ");
+                }
+           }
+            printf("\n");
+        }
+}
