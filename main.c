@@ -27,33 +27,20 @@ int main()
     int tempx;
     char quitter;
     char lettre;
+    int compteur;
 
     FILE* fichier=NULL;
     char chaine[22]="";
     int ligne=0;
     int colonne=0;
 
+
     tempy=1;
     tempx=1;
     positionx=1;
     positiony=1;
     temps_de_pause=100;
-
-    while(quitter!='p')
-    {
-    hidecursor();
-
-    //initialisation des tableaux
-       for(j=0;j<20;j++)
-        {
-
-        for(i=0;i<20;i++)
-            {
-                tableau1[i][j]=0;
-            }
-        }
-
-    //ouverture et lecture du fichier texte
+    compteur=0;
 
     fichier=fopen("Grille1.txt","r");
 
@@ -65,7 +52,7 @@ int main()
 
             for(colonne=0;colonne<22;colonne++)
            {
-               if(chaine[colonne]=='0' || chaine[colonne]=='1')
+               if(chaine[colonne]=='0' || chaine[colonne]=='1' || chaine[colonne]=='2')
                {
                   tableau1[colonne][ligne]=chaine[colonne]-48;
                }
@@ -73,12 +60,21 @@ int main()
         }
     }
 
+    while(quitter!='p')
+    {
+    hidecursor();
+
+    //ouverture et lecture du fichier texte
+
        Sleep(temps_de_pause);
         clrscr();
 
     tableau1[positionx][positiony]=pacman;
+
+
     tempy=positiony;
     tempx=positionx;
+
     affichage();
 
     printf("\n");
@@ -94,16 +90,25 @@ int main()
         case'd':{positionx=positionx+1;}break;
     }
 
+    tableau1[tempx][tempy]=0;
+
+
     if(tableau1[positionx][positiony]==1)
     {
        positiony=tempy;
     }
 
+  if(tableau1[positionx][positiony]==2)
+    {
+      tableau1[positionx][positiony]=0;
+      compteur=compteur+1;
+    }
+    printf("votre score est : %d",compteur);
+
        if(tableau1[positionx][positiony]==1)
     {
        positionx=tempx;
     }
-
 }
 }
 
@@ -160,6 +165,10 @@ void affichage(void)
                 if (tableau1[i][j]==5)
                 {
                     printf("O ");
+                }
+                 if (tableau1[i][j]==2)
+                {
+                    printf(". ");
                 }
            }
             printf("\n");
