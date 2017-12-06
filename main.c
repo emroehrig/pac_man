@@ -4,6 +4,7 @@
 #include <windows.h>
 #include <time.h>
 
+//déclaration des fonctions
 void clrscr (void);
 char get_key(void);
 void hidecursor(void);
@@ -14,8 +15,9 @@ int tableau1[22][22]={0};
 int main()
 {
 
-
+// déclaration des variables
     int pacman=5;
+    int fantome1=3;
 
     int i=0;
     int j=0;
@@ -28,20 +30,30 @@ int main()
     char quitter;
     char lettre;
     int compteur;
+    int f1_pos_x=15;
+    int f1_pos_y=15;
+    int distance_x;
+    int distance_y;
+    int f1_temp_x=15;
+    int f1_temp_y=15;
+    int nombre=1;
+    int temps_pause_2=1000;
 
+
+//intialisation du fichier à importer
     FILE* fichier=NULL;
     char chaine[22]="";
     int ligne=0;
     int colonne=0;
 
-
+//initialisation des variables
     tempy=1;
     tempx=1;
     positionx=1;
     positiony=1;
     temps_de_pause=100;
     compteur=0;
-
+//importation du fichier texte
     fichier=fopen("Grille1.txt","r");
 
     if(fichier != NULL)
@@ -54,7 +66,7 @@ int main()
            {
                if(chaine[colonne]=='0' || chaine[colonne]=='1' || chaine[colonne]=='2')
                {
-                  tableau1[colonne][ligne]=chaine[colonne]-48;
+                  tableau1[colonne][ligne]=chaine[colonne]-48; //importation de la chaine dans le tableau
                }
             }
         }
@@ -62,19 +74,19 @@ int main()
 
     while(quitter!='p')
     {
-    hidecursor();
-
-    //ouverture et lecture du fichier texte
-
+    hidecursor(); //effacement du curseur
+//rafraichissement de l'écran
        Sleep(temps_de_pause);
         clrscr();
-
+//gestion de la position
     tableau1[positionx][positiony]=pacman;
-
-
+    tableau1[f1_pos_x][f1_pos_y]=fantome1;
     tempy=positiony;
     tempx=positionx;
+    f1_temp_x=f1_pos_x;
+    f1_temp_y=f1_pos_y;
 
+//affichage de la grille
     affichage();
 
     printf("\n");
@@ -89,13 +101,14 @@ int main()
         case'q':{positionx=positionx-1;}break;
         case'd':{positionx=positionx+1;}break;
     }
-
+//gestion des collisions
     tableau1[tempx][tempy]=0;
 
 
     if(tableau1[positionx][positiony]==1)
     {
-       positiony=tempy;
+        positiony=tempy;
+        positionx=tempx;
     }
 
   if(tableau1[positionx][positiony]==2)
@@ -105,10 +118,65 @@ int main()
     }
     printf("votre score est : %d",compteur);
 
-       if(tableau1[positionx][positiony]==1)
+
+//gestion des déplacements du fantome
+    tableau1[f1_temp_x][f1_temp_y]=0;
+    distance_x=(positionx-f1_pos_x);
+    distance_y=(positiony-f1_pos_y);
+
+if((distance_x*distance_x)<35 && (distance_y*distance_y)<35)
+{
+       if(distance_x*distance_x>=distance_y*distance_y)
     {
-       positionx=tempx;
+        if(distance_x>0)
+        {
+            f1_pos_x=f1_pos_x+1;
+        }
+    else
+        {
+            f1_pos_x=f1_pos_x-1;
+        }
     }
+    else
+    {
+    if(distance_y>0)
+        {
+            f1_pos_y=f1_pos_y+1;
+        }
+    else
+        {
+            f1_pos_y=f1_pos_y-1;
+        }
+    }
+
+}
+else
+{
+
+printf("chiffre %d", nombre);
+
+ switch(nombre)
+ {
+     case 0 : {f1_pos_x=f1_pos_x+1;}break;
+     case 1 : {f1_pos_x=f1_pos_x-1;}break;
+     case 2 : {f1_pos_y=f1_pos_y+1;}break;
+     case 3 : {f1_pos_y=f1_pos_y-1;}break;
+ }
+
+}
+
+    if(tableau1[f1_pos_x][f1_pos_y]==1)
+    {
+        f1_pos_x=f1_temp_x;
+        f1_pos_y=f1_temp_y;
+        nombre=rand()%4;
+    }
+
+    if(tableau1[f1_pos_x][f1_pos_y]==2)
+    {
+      tableau1[f1_temp_x][f1_temp_y]=2;
+    }
+
 }
 }
 
@@ -143,7 +211,7 @@ void hidecursor()
    info.bVisible = FALSE;
    SetConsoleCursorInfo(consoleHandle, &info);
 }
-
+//affichage de la grille
 void affichage(void)
 {
     int i;
@@ -170,6 +238,11 @@ void affichage(void)
                 {
                     printf(". ");
                 }
+                  if (tableau1[i][j]==3)
+                {
+                    printf("M ");
+                }
+
            }
             printf("\n");
         }
